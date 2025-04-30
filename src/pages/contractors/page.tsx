@@ -4,7 +4,6 @@ import { ContractorsFilter } from '@/components/contractors/contractors-filter'
 import { Loader2 } from 'lucide-react'
 import { PageHeader } from '@/components/page-header'
 import { UserPlus } from 'lucide-react'
-import { DashboardLayout } from '@/layouts/DashboardLayout'
 import ContractorsService, { Contractor } from '@/lib/services/contractors'
 
 export default function ContractorsPage() {
@@ -135,41 +134,39 @@ export default function ContractorsPage() {
   }
 
   return (
-    <DashboardLayout>
-      <div className="relative">
-        {/* Content with higher z-index */}
-        <div className="relative z-10 flex flex-col space-y-6 p-6">
-          <PageHeader
-            title="Contractors"
-            description="View and manage contractors for your projects."
-            action={{
-              label: 'Add Contractor',
-              href: '/contractors/new',
-              icon: UserPlus,
-            }}
-          />
+    <div className="relative">
+      {/* Content with higher z-index */}
+      <div className="relative z-10 flex flex-col space-y-6 p-6">
+        <PageHeader
+          title="Contractors"
+          description="View and manage contractors for your projects."
+          action={{
+            label: 'Add Contractor',
+            href: '/contractors/new',
+            icon: UserPlus,
+          }}
+        />
 
-          <ContractorsFilter
-            name={name}
-            specialty={specialtyFilter}
-            status={statusFilter}
-            onFilterChange={handleFilterChange}
-            onClearFilters={clearFilters}
-          />
+        <ContractorsFilter
+          name={name}
+          specialty={specialtyFilter}
+          status={statusFilter}
+          onFilterChange={handleFilterChange}
+          onClearFilters={clearFilters}
+        />
 
-          {isLoading ? (
-            <div className="flex items-center justify-center h-64">
-              <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
-            </div>
-          ) : error ? (
-            <div className="bg-destructive/10 text-destructive p-4 rounded-md">
-              {error}
-            </div>
-          ) : (
-            <ContractorsList contractors={contractors} />
-          )}
-        </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center h-64">
+            <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
+          </div>
+        ) : error ? (
+          <div className="bg-destructive/10 text-destructive p-4 rounded-md">
+            {error}
+          </div>
+        ) : (
+          <ContractorsList contractors={contractors} />
+        )}
       </div>
-    </DashboardLayout>
+    </div>
   )
 }

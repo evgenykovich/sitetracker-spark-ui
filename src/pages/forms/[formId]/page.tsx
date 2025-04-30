@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
-import { DashboardLayout } from '@/layouts/DashboardLayout'
+
 import { Button } from '@/components/ui/button'
 import { ChevronLeft } from 'lucide-react'
 import { useToast } from '@/lib/hooks/use-toast'
@@ -8,7 +8,7 @@ import { FormEditor } from '@/components/salesforce/form-editor'
 import SalesforceService, {
   SalesforceFormField,
 } from '@/lib/services/salesforce'
-import ContractorsService, { Contractor } from '@/lib/services/contractors'
+import ContractorsService from '@/lib/services/contractors'
 
 export default function SalesforceFormPage() {
   const [fields, setFields] = useState<SalesforceFormField[]>([])
@@ -87,50 +87,48 @@ export default function SalesforceFormPage() {
   }
 
   return (
-    <DashboardLayout>
-      <div className="relative flex flex-col min-h-0 flex-1">
-        <div className="sticky top-[54px] z-30 bg-white">
-          <div className="flex items-center justify-between py-4 border-b">
-            <div className="flex items-center space-x-4">
-              <Link to="/forms">
-                <Button variant="ghost" size="icon">
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-              </Link>
-              <div>
-                <h1 className="text-2xl font-semibold">Edit Form</h1>
-                <p className="text-sm text-muted-foreground">
-                  Modify form details and contractor assignment
-                </p>
-              </div>
+    <div className="relative flex flex-col min-h-0 flex-1">
+      <div className="sticky top-[54px] z-30 bg-white">
+        <div className="flex items-center justify-between py-4 border-b">
+          <div className="flex items-center space-x-4">
+            <Link to="/forms">
+              <Button variant="ghost" size="icon">
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-2xl font-semibold">Edit Form</h1>
+              <p className="text-sm text-muted-foreground">
+                Modify form details and contractor assignment
+              </p>
             </div>
           </div>
         </div>
-
-        {isLoading ? (
-          <div className="flex items-center justify-center min-h-[600px]">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-          </div>
-        ) : fields.length === 0 ? (
-          <div className="text-center py-8">
-            <div className="text-lg font-medium">No Fields Found</div>
-            <p className="text-sm text-muted-foreground">
-              This form does not have any fields configured
-            </p>
-          </div>
-        ) : (
-          <FormEditor
-            fields={fields}
-            contractors={contractors}
-            onSave={handleSave}
-            initialData={{
-              name: '',
-              description: '',
-              selectedFields: fields.map((f) => f.Id),
-            }}
-          />
-        )}
       </div>
-    </DashboardLayout>
+
+      {isLoading ? (
+        <div className="flex items-center justify-center min-h-[600px]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      ) : fields.length === 0 ? (
+        <div className="text-center py-8">
+          <div className="text-lg font-medium">No Fields Found</div>
+          <p className="text-sm text-muted-foreground">
+            This form does not have any fields configured
+          </p>
+        </div>
+      ) : (
+        <FormEditor
+          fields={fields}
+          contractors={contractors}
+          onSave={handleSave}
+          initialData={{
+            name: '',
+            description: '',
+            selectedFields: fields.map((f) => f.Id),
+          }}
+        />
+      )}
+    </div>
   )
 }

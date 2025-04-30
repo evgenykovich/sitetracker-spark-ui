@@ -2,11 +2,24 @@ import { useState } from 'react'
 import { PageHeader } from '@/components/page-header'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { UserPlus, FileSpreadsheet } from 'lucide-react'
-import { ContractorForm } from '@/components/contractors/contractor-form'
-import { ContractorBulkImport } from '@/components/contractors/contractor-bulk-import'
+import { ContractorForm, ContractorBulkImport } from '../components'
+import { useContractors } from '../context/ContractorsContext'
+import { useNavigate } from 'react-router-dom'
 
-export default function NewContractorPage() {
+export function ContractorNewPage() {
   const [activeTab, setActiveTab] = useState('manual')
+  const { createContractor, importContractors } = useContractors()
+  const navigate = useNavigate()
+
+  const handleSubmit = async (data: Parameters<typeof createContractor>[0]) => {
+    await createContractor(data)
+    navigate('/contractors')
+  }
+
+  const handleImport = async (file: File) => {
+    await importContractors(file)
+    navigate('/contractors')
+  }
 
   return (
     <div className="flex flex-col space-y-6 p-6 min-h-screen pb-24">
@@ -35,11 +48,11 @@ export default function NewContractorPage() {
 
         <div className="mt-6">
           <TabsContent value="manual" className="mt-0">
-            <ContractorForm />
+            <ContractorForm onSubmit={handleSubmit} />
           </TabsContent>
 
           <TabsContent value="import" className="mt-0">
-            <ContractorBulkImport />
+            <ContractorBulkImport onImport={handleImport} />
           </TabsContent>
         </div>
       </Tabs>

@@ -18,6 +18,10 @@ export default defineConfig({
       '@/styles': path.resolve(__dirname, './src/styles'),
       '@/utils': path.resolve(__dirname, './src/utils'),
       '@/services': path.resolve(__dirname, './src/services'),
+      '@site-tracker/contractors': path.resolve(
+        __dirname,
+        './src/packages/contractors/src'
+      ),
     },
   },
 })

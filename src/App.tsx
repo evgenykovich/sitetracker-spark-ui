@@ -10,16 +10,37 @@ import Forms from './pages/forms/page'
 import SalesforceIntegration from './pages/integrations/salesforce/page'
 import FormId from './pages/forms/[formId]/page'
 import CreateForm from './pages/forms/create/page'
-import ContractorsList from './pages/contractors/page'
-import ContractorNew from './pages/contractors/new/page'
+import { useContractorsRoutes } from '@site-tracker/contractors'
 import AdminAppearance from './pages/admin/appearance/page'
+import { getBaseUrl } from './lib/utils'
+import { getToken } from './lib/auth'
 import AdminPayments from './pages/admin/payments/page'
 import AdminSystem from './pages/admin/system/page'
 import AdminUsers from './pages/admin/users/page'
 import AdminSettings from './pages/admin/settings/page'
 import { AdminLayout } from './layouts/AdminLayout'
+import { DashboardLayout } from './layouts/DashboardLayout'
+
+// Feature flags could come from environment variables, config service, etc.
+const FEATURES = {
+  contractors: true,
+}
+
+// Configuration for feature-toggled modules
+const moduleConfig = {
+  contractors: {
+    serviceConfig: {
+      baseUrl: getBaseUrl(),
+      getToken,
+    },
+    enabled: FEATURES.contractors,
+  },
+}
 
 function App() {
+  // Get the contractors routes based on configuration
+  const contractorsRoutes = useContractorsRoutes(moduleConfig.contractors)
+
   return (
     <Router>
       <AuthProvider>
@@ -29,22 +50,23 @@ function App() {
             <Route path="/" element={<Home />} />
 
             {/* Protected routes */}
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/forms" element={<Forms />} />
-            <Route path="/forms/create" element={<CreateForm />} />
-            <Route path="/forms/:formId" element={<FormId />} />
-            <Route path="/settings">
-              <Route index element={<AccountSettings />} />
-              <Route path="profile" element={<UserProfile />} />
+            <Route element={<DashboardLayout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/forms" element={<Forms />} />
+              <Route path="/forms/create" element={<CreateForm />} />
+              <Route path="/forms/:formId" element={<FormId />} />
+              <Route path="/settings">
+                <Route index element={<AccountSettings />} />
+                <Route path="profile" element={<UserProfile />} />
+              </Route>
+              <Route
+                path="/integrations/salesforce"
+                element={<SalesforceIntegration />}
+              />
+
+              {/* Feature-toggled Contractors Module */}
+              {contractorsRoutes}
             </Route>
-            <Route path="/contractors">
-              <Route index element={<ContractorsList />} />
-              <Route path="new" element={<ContractorNew />} />
-            </Route>
-            <Route
-              path="/integrations/salesforce"
-              element={<SalesforceIntegration />}
-            />
 
             {/* Admin routes */}
             <Route path="/admin" element={<AdminLayout />}>

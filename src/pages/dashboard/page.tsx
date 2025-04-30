@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '@/lib/contexts/auth-context'
-import { DashboardLayout } from '@/layouts/DashboardLayout'
 import {
   Card,
   CardContent,
@@ -191,7 +190,7 @@ export default function DashboardPage() {
   ]
 
   return (
-    <DashboardLayout>
+    <>
       <div className="space-y-8 p-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
@@ -417,6 +416,6 @@ export default function DashboardPage() {
           </>
         )}
       </div>
-    </DashboardLayout>
+    </>
   )
 }

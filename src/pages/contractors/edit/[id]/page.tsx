@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { DashboardLayout } from '@/layouts/DashboardLayout'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft } from 'lucide-react'
 import { useToast } from '@/lib/hooks/use-toast'
@@ -40,7 +39,7 @@ export default function EditContractorPage() {
   }, [id, navigate, toast])
 
   return (
-    <DashboardLayout>
+    <>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
           <Button
@@ -62,6 +61,6 @@ export default function EditContractorPage() {
       {!isLoading && contractor && (
         <ContractorForm mode="edit" initialData={contractor} />
       )}
-    </DashboardLayout>
+    </>
   )
 }

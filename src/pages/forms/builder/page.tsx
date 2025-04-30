@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { DashboardLayout } from '@/layouts/DashboardLayout'
 import { useToast } from '@/lib/hooks/use-toast'
 import { FormEditor } from '@/components/salesforce/form-editor'
 import SalesforceService, {
@@ -78,20 +77,18 @@ export default function FormBuilderPage() {
   }
 
   return (
-    <DashboardLayout>
-      <div className="p-6">
-        {isLoading ? (
-          <div className="flex items-center justify-center min-h-[600px]">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-          </div>
-        ) : (
-          <FormEditor
-            fields={fields}
-            contractors={contractors}
-            onSave={handleSave}
-          />
-        )}
-      </div>
-    </DashboardLayout>
+    <div className="p-6">
+      {isLoading ? (
+        <div className="flex items-center justify-center min-h-[600px]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      ) : (
+        <FormEditor
+          fields={fields}
+          contractors={contractors}
+          onSave={handleSave}
+        />
+      )}
+    </div>
   )
 }

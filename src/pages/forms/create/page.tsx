@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { DashboardLayout } from '@/layouts/DashboardLayout'
 import { PageHeader } from '@/components/page-header'
 import { Card, CardContent } from '@/components/ui/card'
 import { useToast } from '@/lib/hooks/use-toast'
@@ -178,38 +177,34 @@ export default function CreateFormPage() {
 
   if (isLoading) {
     return (
-      <DashboardLayout>
-        <div className="flex flex-col space-y-6 p-6">
-          <PageHeader
-            title="Create New Form"
-            description="Create a new form and assign it to a contractor."
-          />
-          <div className="flex items-center justify-center h-64">
-            <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
-          </div>
-        </div>
-      </DashboardLayout>
-    )
-  }
-
-  return (
-    <DashboardLayout>
       <div className="flex flex-col space-y-6 p-6">
         <PageHeader
           title="Create New Form"
           description="Create a new form and assign it to a contractor."
         />
-
-        <Card>
-          <CardContent className="p-6">
-            <FormEditor
-              fields={SAMPLE_FIELDS}
-              contractors={contractors}
-              onSave={handleSaveForm}
-            />
-          </CardContent>
-        </Card>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
+        </div>
       </div>
-    </DashboardLayout>
+    )
+  }
+
+  return (
+    <div className="flex flex-col space-y-6 p-6">
+      <PageHeader
+        title="Create New Form"
+        description="Create a new form and assign it to a contractor."
+      />
+
+      <Card>
+        <CardContent className="p-6">
+          <FormEditor
+            fields={SAMPLE_FIELDS}
+            contractors={contractors}
+            onSave={handleSaveForm}
+          />
+        </CardContent>
+      </Card>
+    </div>
   )
 }

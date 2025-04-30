@@ -1,10 +1,11 @@
-import { ReactNode, useState } from 'react'
+import { useState } from 'react'
 import { Sidebar } from '../components/dashboard/sidebar'
 import { Header } from '../components/dashboard/header'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/lib/contexts/auth-context'
+import { Outlet } from 'react-router-dom'
 
-export function DashboardLayout({ children }: { children: ReactNode }) {
+export function DashboardLayout() {
   const { user, isAdmin } = useAuth()
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
@@ -31,7 +32,10 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         )}
       >
         <Header onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
-        <main className="w-full p-6">{children}</main>
+        <main className="w-full p-6">
+          {' '}
+          <Outlet />
+        </main>
       </div>
     </div>
   )
