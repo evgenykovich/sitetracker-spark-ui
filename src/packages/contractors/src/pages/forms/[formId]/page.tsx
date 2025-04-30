@@ -1,0 +1,134 @@
+import { useState, useEffect } from 'react'
+import { Link, useParams, useNavigate } from 'react-router-dom'
+
+import { Button } from '@site-tracker/contractors/components/ui/button'
+import { ChevronLeft } from 'lucide-react'
+import { useToast } from '@/lib/hooks/use-toast'
+import { FormEditor } from '@site-tracker/contractors/components/salesforce/form-editor'
+import SalesforceService, {
+  SalesforceFormField,
+} from '@/lib/services/salesforce'
+import ContractorsService from '@/lib/services/contractors'
+
+export default function SalesforceFormPage() {
+  const [fields, setFields] = useState<SalesforceFormField[]>([])
+  const [contractors, setContractors] = useState<
+    { id: string; name: string }[]
+  >([])
+  const [isLoading, setIsLoading] = useState(true)
+  const { formId } = useParams()
+  const navigate = useNavigate()
+  const { toast } = useToast()
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setIsLoading(true)
+
+        // Fetch fields and contractors in parallel
+        const [fields, contractorsData] = await Promise.all([
+          SalesforceService.getFormFields(formId as string),
+          ContractorsService.getContractors({}),
+        ])
+
+        // Format contractors for the dropdown
+        const formattedContractors = contractorsData.map((contractor) => ({
+          id: contractor.id,
+          name: `${contractor.firstName} ${contractor.lastName}${
+            contractor.companyName ? ` (${contractor.companyName})` : ''
+          }`,
+        }))
+
+        setFields(fields)
+        setContractors(formattedContractors)
+      } catch (error) {
+        console.error('Failed to load data:', error)
+        toast({
+          title: 'Error',
+          description:
+            error instanceof Error ? error.message : 'Failed to load form data',
+          variant: 'destructive',
+        })
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    if (formId) {
+      fetchData()
+    }
+  }, [formId, toast])
+
+  const handleSave = async (formData: {
+    name: string
+    description: string
+    selectedFields: string[]
+    assignedContractor?: string
+  }) => {
+    try {
+      // Mock save - we'll implement the actual save later
+      console.log('Form data to save:', formData)
+
+      toast({
+        title: 'Success',
+        description: 'Form updated successfully',
+      })
+
+      navigate('/forms')
+    } catch (error) {
+      console.error('Failed to update form:', error)
+      toast({
+        title: 'Error',
+        description:
+          error instanceof Error ? error.message : 'Failed to update form',
+        variant: 'destructive',
+      })
+    }
+  }
+
+  return (
+    <div className="relative flex flex-col min-h-0 flex-1">
+      <div className="sticky top-[54px] z-30 bg-white">
+        <div className="flex items-center justify-between py-4 border-b">
+          <div className="flex items-center space-x-4">
+            <Link to="/forms">
+              <Button variant="ghost" size="icon">
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-2xl font-semibold">Edit Form</h1>
+              <p className="text-sm text-muted-foreground">
+                Modify form details and contractor assignment
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="flex items-center justify-center min-h-[600px]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      ) : fields.length === 0 ? (
+        <div className="text-center py-8">
+          <div className="text-lg font-medium">No Fields Found</div>
+          <p className="text-sm text-muted-foreground">
+            This form does not have any fields configured
+          </p>
+        </div>
+      ) : (
+        <FormEditor
+          fields={fields}
+          contractors={contractors}
+          onSave={handleSave}
+          initialData={{
+            name: '',
+            description: '',
+            selectedFields: fields.map((f) => f.Id),
+          }}
+        />
+      )}
+    </div>
+  )
+}

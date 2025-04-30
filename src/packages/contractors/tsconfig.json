@@ -6,7 +6,8 @@
     "composite": true,
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["../*"]
+      "@/*": ["../*"],
+      "@contractors/*": ["./*"]
     }
   },
   "include": ["src/**/*"],

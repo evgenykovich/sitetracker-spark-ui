@@ -11,11 +11,15 @@ import {
   ChevronLeft,
   ChevronRight,
   Cloud,
+  ChevronDown,
+  ClipboardList,
+  CheckSquare,
+  PlusCircle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import sitetrackerLogoIcon from '../../assets/images/sitetracker_logo_icon.png'
 
 interface NavItemProps {
@@ -23,8 +27,66 @@ interface NavItemProps {
   icon: ReactNode
   label: string
   isActive: boolean
-  isAdmin?: boolean
   collapsed?: boolean
+  depth?: number
+}
+
+interface NavGroupProps {
+  icon: ReactNode
+  label: string
+  isActive: boolean
+  collapsed?: boolean
+  children?: ReactNode
+}
+
+function NavGroup({
+  icon,
+  label,
+  isActive,
+  collapsed,
+  children,
+}: NavGroupProps) {
+  const [isOpen, setIsOpen] = useState(true)
+
+  if (collapsed) {
+    return (
+      <div className="space-y-1">
+        <div
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-2 py-2 text-sm transition-all hover:bg-accent cursor-pointer',
+            isActive
+              ? 'bg-accent text-accent-foreground'
+              : 'text-muted-foreground'
+          )}
+          onClick={() => setIsOpen(!isOpen)}
+          title={label}
+        >
+          {icon}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-1">
+      <div
+        className={cn(
+          'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all hover:bg-accent cursor-pointer',
+          isActive
+            ? 'bg-accent text-accent-foreground'
+            : 'text-muted-foreground'
+        )}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {icon}
+        <span className="flex-1">{label}</span>
+        <ChevronDown
+          className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')}
+        />
+      </div>
+      {isOpen && <div className="ml-4">{children}</div>}
+    </div>
+  )
 }
 
 function NavItem({
@@ -32,8 +94,8 @@ function NavItem({
   icon,
   label,
   isActive,
-  isAdmin,
   collapsed,
+  depth = 0,
 }: NavItemProps) {
   return (
     <Link
@@ -41,7 +103,8 @@ function NavItem({
       className={cn(
         'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all hover:bg-accent',
         isActive ? 'bg-accent text-accent-foreground' : 'text-muted-foreground',
-        collapsed && 'justify-center px-2'
+        collapsed && 'justify-center px-2',
+        depth > 0 && !collapsed && 'pl-6'
       )}
       title={collapsed ? label : undefined}
     >
@@ -52,17 +115,16 @@ function NavItem({
 }
 
 interface SidebarProps {
-  isAdmin?: boolean
   isSidebarOpen: boolean
   onToggleSidebar: () => void
 }
 
-export function Sidebar({
-  isAdmin,
-  isSidebarOpen,
-  onToggleSidebar,
-}: SidebarProps) {
+export function Sidebar({ isSidebarOpen, onToggleSidebar }: SidebarProps) {
   const pathname = useLocation().pathname
+
+  const isContractorsActive = pathname.startsWith('/contractors')
+  const isFormsActive = pathname.startsWith('/forms')
+  const isFormApprovalsActive = pathname.startsWith('/form-approvals')
 
   return (
     <motion.aside
@@ -120,20 +182,48 @@ export function Sidebar({
               isActive={pathname === '/dashboard'}
               collapsed={!isSidebarOpen}
             />
-            <NavItem
-              href="/forms"
-              icon={<FileSpreadsheet className="h-4 w-4" />}
-              label="Forms"
-              isActive={pathname.startsWith('/forms')}
-              collapsed={!isSidebarOpen}
-            />
-            <NavItem
-              href="/contractors"
+
+            <NavGroup
               icon={<Users className="h-4 w-4" />}
               label="Contractors"
-              isActive={pathname.startsWith('/contractors')}
+              isActive={
+                isContractorsActive || isFormsActive || isFormApprovalsActive
+              }
               collapsed={!isSidebarOpen}
-            />
+            >
+              <NavItem
+                href="/contractors"
+                icon={<ClipboardList className="h-4 w-4" />}
+                label="Contractors List"
+                isActive={pathname === '/contractors'}
+                collapsed={!isSidebarOpen}
+                depth={1}
+              />
+              <NavItem
+                href="/contractors/new"
+                icon={<PlusCircle className="h-4 w-4" />}
+                label="Add Contractor"
+                isActive={pathname === '/contractors/new'}
+                collapsed={!isSidebarOpen}
+                depth={1}
+              />
+              <NavItem
+                href="/forms"
+                icon={<FileSpreadsheet className="h-4 w-4" />}
+                label="Forms"
+                isActive={isFormsActive}
+                collapsed={!isSidebarOpen}
+                depth={1}
+              />
+              <NavItem
+                href="/form-approvals"
+                icon={<CheckSquare className="h-4 w-4" />}
+                label="Approvals"
+                isActive={isFormApprovalsActive}
+                collapsed={!isSidebarOpen}
+                depth={1}
+              />
+            </NavGroup>
 
             <NavItem
               href="/analytics"

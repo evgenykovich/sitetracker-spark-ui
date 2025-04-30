@@ -6,10 +6,7 @@ import Dashboard from './pages/dashboard/page'
 import Admin from './pages/admin/page'
 import UserProfile from './pages/settings/profile/page'
 import AccountSettings from './pages/settings/page'
-import Forms from './pages/forms/page'
 import SalesforceIntegration from './pages/integrations/salesforce/page'
-import FormId from './pages/forms/[formId]/page'
-import CreateForm from './pages/forms/create/page'
 import { useContractorsRoutes } from '@site-tracker/contractors'
 import AdminAppearance from './pages/admin/appearance/page'
 import { getBaseUrl } from './lib/utils'
@@ -52,20 +49,19 @@ function App() {
             {/* Protected routes */}
             <Route element={<DashboardLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/forms" element={<Forms />} />
-              <Route path="/forms/create" element={<CreateForm />} />
-              <Route path="/forms/:formId" element={<FormId />} />
               <Route path="/settings">
                 <Route index element={<AccountSettings />} />
                 <Route path="profile" element={<UserProfile />} />
               </Route>
+
+              {/* Feature-toggled Contractors Module */}
+              {contractorsRoutes}
+
+              {/* Integrations */}
               <Route
                 path="/integrations/salesforce"
                 element={<SalesforceIntegration />}
               />
-
-              {/* Feature-toggled Contractors Module */}
-              {contractorsRoutes}
             </Route>
 
             {/* Admin routes */}

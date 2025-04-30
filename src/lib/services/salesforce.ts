@@ -91,6 +91,16 @@ export interface SalesforceOrgConfig {
   isSandbox?: boolean
 }
 
+export interface FormApproval {
+  id: string
+  formName: string
+  contractorName: string
+  submittedDate: string
+  status: 'pending' | 'approved' | 'rejected'
+  description?: string
+  notes?: string
+}
+
 class SalesforceService {
   private static API_URL = `${getBaseUrl()}/api/salesforce`
 
@@ -261,6 +271,49 @@ class SalesforceService {
     }
 
     return response.json()
+  }
+
+  static async getFormApprovals(): Promise<FormApproval[]> {
+    const response = await fetch(`${this.API_URL}/form-approvals`, {
+      headers: await this.getHeaders(),
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message || 'Failed to fetch form approvals')
+    }
+
+    return response.json()
+  }
+
+  static async approveForm(approvalId: string): Promise<void> {
+    const response = await fetch(
+      `${this.API_URL}/form-approvals/${approvalId}/approve`,
+      {
+        method: 'POST',
+        headers: await this.getHeaders(),
+      }
+    )
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message || 'Failed to approve form')
+    }
+  }
+
+  static async rejectForm(approvalId: string): Promise<void> {
+    const response = await fetch(
+      `${this.API_URL}/form-approvals/${approvalId}/reject`,
+      {
+        method: 'POST',
+        headers: await this.getHeaders(),
+      }
+    )
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message || 'Failed to reject form')
+    }
   }
 }
 
