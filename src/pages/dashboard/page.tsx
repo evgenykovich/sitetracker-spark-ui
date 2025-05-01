@@ -22,9 +22,18 @@ import {
   UserPlus,
   AlertTriangle,
 } from 'lucide-react'
-import SalesforceService from '@/lib/services/salesforce'
+import SalesforceService, { SalesforceForm } from '@/lib/services/salesforce'
 import ContractorsService from '@/lib/services/contractors'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+
+interface Contractor {
+  id: string
+  firstName: string
+  lastName: string
+  companyName?: string
+  status?: string
+  createdAt?: string
+}
 
 const container = {
   hidden: { opacity: 0 },
@@ -53,8 +62,8 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [salesforceError, setSalesforceError] = useState<boolean>(false)
   const [contractorsError, setContractorsError] = useState<boolean>(false)
-  const [recentContractors, setRecentContractors] = useState<any[]>([])
-  const [recentForms, setRecentForms] = useState<any[]>([])
+  const [recentContractors, setRecentContractors] = useState<Contractor[]>([])
+  const [recentForms, setRecentForms] = useState<SalesforceForm[]>([])
 
   useEffect(() => {
     if (!loading && !user) {
@@ -139,8 +148,8 @@ export default function DashboardPage() {
           })
           setRecentContractors(sortedContractors.slice(0, 3))
         }
-      } catch (err: any) {
-        console.error('Error fetching dashboard data:', err)
+      } catch (error: Error | unknown) {
+        console.error('Error fetching dashboard data:', error)
         setSalesforceError(true)
         setContractorsError(true)
       } finally {

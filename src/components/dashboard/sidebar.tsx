@@ -15,6 +15,7 @@ import {
   ClipboardList,
   CheckSquare,
   PlusCircle,
+  Shield,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -117,9 +118,14 @@ function NavItem({
 interface SidebarProps {
   isSidebarOpen: boolean
   onToggleSidebar: () => void
+  isAdmin?: boolean
 }
 
-export function Sidebar({ isSidebarOpen, onToggleSidebar }: SidebarProps) {
+export function Sidebar({
+  isSidebarOpen,
+  onToggleSidebar,
+  isAdmin,
+}: SidebarProps) {
   const pathname = useLocation().pathname
 
   const isContractorsActive = pathname.startsWith('/contractors')
@@ -133,7 +139,11 @@ export function Sidebar({ isSidebarOpen, onToggleSidebar }: SidebarProps) {
         width: isSidebarOpen ? 240 : 64,
       }}
       transition={{ duration: 0.2 }}
-      className="fixed top-0 bottom-0 left-0 z-50 flex flex-col border-r bg-background overflow-hidden"
+      className={cn(
+        'fixed top-0 bottom-0 left-0 z-50 flex flex-col border-r bg-background overflow-hidden',
+        '-translate-x-full md:translate-x-0',
+        isSidebarOpen && 'translate-x-0'
+      )}
     >
       <div className="flex h-14 items-center justify-center border-b">
         <Link
@@ -253,6 +263,29 @@ export function Sidebar({ isSidebarOpen, onToggleSidebar }: SidebarProps) {
               collapsed={!isSidebarOpen}
             />
           </div>
+
+          {isAdmin && (
+            <>
+              <Separator />
+              <div className="space-y-1">
+                <h2
+                  className={cn(
+                    'mb-2 px-2 text-lg font-semibold tracking-tight',
+                    !isSidebarOpen && 'sr-only'
+                  )}
+                >
+                  Admin
+                </h2>
+                <NavItem
+                  href="/admin"
+                  icon={<Shield className="h-4 w-4" />}
+                  label="Admin Panel"
+                  isActive={pathname.startsWith('/admin')}
+                  collapsed={!isSidebarOpen}
+                />
+              </div>
+            </>
+          )}
         </nav>
       </div>
 
